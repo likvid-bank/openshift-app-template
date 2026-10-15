@@ -46,16 +46,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # The registry route uses the cluster's self-signed router certificate, hence no TLS verification.
-      # podman is preinstalled on the ubuntu runners and, unlike docker, takes that per command.
+      # podman is preinstalled on the ubuntu runners.
       - name: Build and push image
         env:
           OPENSHIFT_REGISTRY_TOKEN: ${{ secrets.OPENSHIFT_REGISTRY_TOKEN }}
         run: |
           image="$OPENSHIFT_REGISTRY/$OPENSHIFT_NAMESPACE/app:$IMAGE_TAG"
-          echo "$OPENSHIFT_REGISTRY_TOKEN" | podman login --tls-verify=false -u github-actions --password-stdin "$OPENSHIFT_REGISTRY"
+          echo "$OPENSHIFT_REGISTRY_TOKEN" | podman login -u github-actions --password-stdin "$OPENSHIFT_REGISTRY"
           podman build -t "$image" ./app
-          podman push --tls-verify=false "$image"
+          podman push "$image"
 
       - name: Deploy to OpenShift
         env:
