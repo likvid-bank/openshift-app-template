@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          # Pulled through the internal registry service, where the workflow pushed it via the route.
+          image: image-registry.openshift-image-registry.svc:5000/${OPENSHIFT_NAMESPACE}/app:${IMAGE_TAG}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: STAGE_NAMESPACE
+              value: ${OPENSHIFT_NAMESPACE}
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          # restricted-v2 assigns an arbitrary UID; the container must not need root.
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault

@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  host: ${APP_HOSTNAME}
+  to:
+    kind: Service
+    name: app
+  port:
+    targetPort: http
+  # TLS terminates at the router with the cluster's default certificate.
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

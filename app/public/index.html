@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your OpenShift App</title>
+    <style>
+      :root { color-scheme: light dark; --accent: #ee0000; }
+      body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 4rem auto; padding: 0 1rem; line-height: 1.5; }
+      h1 { margin-bottom: 0.25rem; }
+      .badge { display: inline-block; padding: 0.1rem 0.6rem; border-radius: 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; }
+      dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
+      dt { font-weight: 600; }
+      code { font-size: 0.95em; }
+    </style>
+  </head>
+  <body>
+    <h1>🚀 It works!</h1>
+    <p><span class="badge">OpenShift</span> Deployed by the meshStack OpenShift Starterkit.</p>
+    <dl id="info"><dt>Loading…</dt><dd></dd></dl>
+    <p>Edit <code>app/public/index.html</code> and push to <code>main</code> to deploy to dev. Merge into <code>release</code> to deploy to prod.</p>
+    <script>
+      fetch("/api/info")
+        .then((r) => r.json())
+        .then((info) => {
+          document.getElementById("info").innerHTML = Object.entries(info)
+            .map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`)
+            .join("");
+        });
+    </script>
+  </body>
+</html>
